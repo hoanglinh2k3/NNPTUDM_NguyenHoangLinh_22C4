@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bài tập Product - JS</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; padding: 16px; }
+    h1 { margin: 0 0 12px; }
+    .box { border: 1px solid #ddd; border-radius: 10px; padding: 12px; margin: 10px 0; }
+    pre { background: #0b1020; color: #dbe5ff; padding: 12px; border-radius: 10px; overflow: auto; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .muted { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Bài tập Product (HTML + JS)</h1>
+  <p class="muted">Mở Console (F12) để xem log chi tiết.</p>
+
+  <div class="box">
+    <h3>Kết quả</h3>
+    <pre id="out"></pre>
+  </div>
+
+  <script>
+    const outEl = document.getElementById("out");
+    const lines = [];
+    const log = (...args) => {
+      console.log(...args);
+      lines.push(args.map(a => (typeof a === "string" ? a : JSON.stringify(a, null, 2))).join(" "));
+      outEl.textContent = lines.join("\n");
+    };
+
+    const formatVND = (n) =>
+      new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(n);
+
+    // =========================
+    // Câu 1: Constructor Product
+    // =========================
+    function Product(id, name, price, quantity, category, isAvailable) {
+      this.id = id;                 // mã sản phẩm
+      this.name = name;             // tên sản phẩm
+      this.price = price;           // giá sản phẩm
+      this.quantity = quantity;     // số lượng tồn kho
+      this.category = category;     // danh mục
+      this.isAvailable = isAvailable; // đang bán (true/false)
+    }
+
+    log("Câu 1) Đã khai báo constructor function Product.");
+
+    // ==================================================
+    // Câu 2: Tạo mảng products >= 6 SP, >= 2 danh mục
+    // ==================================================
+    const products = [
+      new Product("P001", "iPhone 15 Pro Max", 34990000, 5, "Electronics", true),
+      new Product("P002", "MacBook Air M2",     28990000, 0, "Electronics", true),
+      new Product("P003", "Túi da cao cấp",     15990000, 12, "Accessories", true),
+      new Product("P004", "Đồng hồ thời trang",  6990000, 7, "Accessories", false),
+      new Product("P005", "Máy lọc không khí",  10990000, 3, "Home", true),
+      new Product("P006", "Bàn phím cơ",         1990000, 25, "Electronics", true),
+      new Product("P007", "Kính mát",            2490000, 0, "Accessories", true),
+    ];
+
+    log("\nCâu 2) Mảng products (>= 6 sản phẩm, >= 2 danh mục):");
+    log(products);
+
+    // ==========================================
+    // Câu 3: Tạo mảng mới chỉ chứa name, price
+    // ==========================================
+    const namePriceList = products.map(p => ({ name: p.name, price: p.price }));
+    log("\nCâu 3) Mảng mới chỉ chứa {name, price}:");
+    log(namePriceList);
+
+    // ==================================
+    // Câu 4: Lọc sản phẩm còn hàng (q>0)
+    // ==================================
+    const inStockProducts = products.filter(p => p.quantity > 0);
+    log("\nCâu 4) Sản phẩm còn hàng (quantity > 0):");
+    log(inStockProducts);
+
+    // ==================================================
+    // Câu 5: Kiểm tra có ít nhất 1 SP giá > 30.000.000?
+    // ==================================================
+    const hasOver30M = products.some(p => p.price > 30000000);
+    log("\nCâu 5) Có ít nhất 1 sản phẩm giá > 30.000.000?");
+    log(hasOver30M ? "Có" : "Không");
+
+    // ==================================================================================
+    // Câu 6: Kiểm tra tất cả SP thuộc 'Accessories' có đang được bán (isAvailable=true)?
+    // ==================================================================================
+    const accessories = products.filter(p => p.category === "Accessories");
+    const allAccessoriesAvailable = accessories.length > 0 && accessories.every(p => p.isAvailable === true);
+
+    log("\nCâu 6) Tất cả sản phẩm thuộc 'Accessories' có isAvailable = true?");
+    log("Danh sách Accessories:", accessories.map(p => ({ name: p.name, isAvailable: p.isAvailable })));
+    log(allAccessoriesAvailable ? "Đúng (tất cả đang bán)" : "Sai (có sản phẩm không bán)");
+
+    // ============================================
+    // Câu 7: Tính tổng giá trị kho = sum(price*qty)
+    // ============================================
+    const totalInventoryValue = products.reduce((sum, p) => sum + p.price * p.quantity, 0);
+    log("\nCâu 7) Tổng giá trị kho hàng (price × quantity):");
+    log(formatVND(totalInventoryValue));
+
+    // =====================================================
+    // Câu 8: Dùng for...of duyệt và in: Tên - Danh mục - Trạng thái
+    // =====================================================
+    log("\nCâu 8) for...of duyệt products (Tên - Danh mục - Trạng thái):");
+    for (const p of products) {
+      const status = p.isAvailable ? "Đang bán" : "Ngừng bán";
+      log(`- ${p.name} - ${p.category} - ${status}`);
+    }
+
+    // =====================================================
+    // Câu 9: Dùng for...in để:
+    //  - In ra tên thuộc tính
+    //  - In ra giá trị tương ứng
+    // (Làm trên 1 sản phẩm mẫu)
+    // =====================================================
+    const sample = products[0];
+    log("\nCâu 9) for...in trên 1 sản phẩm mẫu:");
+    log("Sản phẩm mẫu:", sample);
+
+    log("-> Tên thuộc tính:");
+    for (const key in sample) log(`  ${key}`);
+
+    log("-> Giá trị tương ứng:");
+    for (const key in sample) log(`  ${key}: ${sample[key]}`);
+
+    // =====================================================
+    // Câu 10: Lấy danh sách tên SP đang bán và còn hàng
+    //  Điều kiện: isAvailable = true && quantity > 0
+    // =====================================================
+    const sellingAndInStockNames = products
+      .filter(p => p.isAvailable === true && p.quantity > 0)
+      .map(p => p.name);
+
+    log("\nCâu 10) Tên sản phẩm đang bán và còn hàng:");
+    log(sellingAndInStockNames);
+
+    // Bonus: hiển thị gọn thêm
+    log("\n(Bonus) Tóm tắt nhanh:");
+    log(`- Tổng SP: ${products.length}`);
+    log(`- Còn hàng: ${inStockProducts.length}`);
+    log(`- SP giá > 30M: ${hasOver30M ? "Có" : "Không"}`);
+    log(`- Giá trị kho: ${formatVND(totalInventoryValue)}`);
+  </script>
+</body>
+</html>
